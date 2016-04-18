@@ -85,7 +85,7 @@ done
 if [ ! -d "${CACHE}" ]; then echo "ERROR: invalid option, cache must be a path"; usage; fi
 if [ -z "${ACTION}" ]; then echo "ERROR: no action specified, action must be either (pull|push)"; usage; fi
 if [ -z "${BUCKET}" ]; then echo "ERROR: no S3 bucket has been specified"; usage; fi
-if [ -z "${PREFIX}" ]; then PREFIX=""; fi
+if [ -z "${PREFIX}" ]; then PREFIX=""; else PREFIX="${PREFIX}/"; fi
 if [ ! -e "${TRIGGER}" ]; then echo "ERROR: no trigger file has been specified"; usage; fi
 if [ ! "${AWS_ACCESS_KEY_ID}" ]; then echo "ERROR: no AWS key has been specified in the environment"; usage; fi
 if [ ! "${AWS_SECRET_ACCESS_KEY}" ]; then echo "ERROR: no AWS secret has been specified in the environment"; usage; fi
