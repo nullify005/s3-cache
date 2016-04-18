@@ -87,7 +87,6 @@ while getopts "t:a:b:p:c:h" opt; do
 done
 
 ## validate the input
-if [ ! -d "${CACHE}" ]; then echo "ERROR: invalid option, cache must be a path"; usage; fi
 if [ -z "${ACTION}" ]; then echo "ERROR: no action specified, action must be either (pull|push)"; usage; fi
 if [ -z "${BUCKET}" ]; then echo "ERROR: no S3 bucket has been specified"; usage; fi
 if [ -z "${PREFIX}" ]; then PREFIX=""; else PREFIX="${PREFIX}/"; fi
@@ -101,8 +100,16 @@ if [ ! `which openssl` ]; then echo "ERROR: cannot locate openssl on the PATH"; 
 ## main
 RC=1
 case "${ACTION}" in
-    pull) pull_s3_cache; RC="${?}" ;;
-    push) push_s3_cache; RC="${?}" ;;
+    pull)
+        if [ -d "${CACHE}" ]; then echo "ERROR: cache path shouldn't exist yet"; usage; fi
+        pull_s3_cache
+        RC="${?}"
+        ;;
+    push)
+        if [ ! -d "${CACHE}" ]; then echo "ERROR: cache must be a path to push"; usage; fi
+        push_s3_cache
+        RC="${?}"
+    ;;
     *) echo "ERROR: invalid action, must be one of (pull|push)"; usage ;;
 esac
 exit "${RC}"
