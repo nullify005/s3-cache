@@ -63,10 +63,15 @@ function pull_s3_cache {
 function push_s3_cache {
     tgz=$(gen_tgz_name)
     s3_uri=$(gen_s3_uri)
-    echo "INFO: packing and storing ${CACHE} to ${s3_uri}"
-    tar -czf ${tgz} ${CACHE}
-    aws s3 cp ${tgz} s3://${BUCKET}/${PREFIX}
-    return ${?}
+    aws s3 ls ${s3_uri} &> /dev/null
+    if [ "${?}" -ne 0 ]; then
+        echo "INFO: packing and storing ${CACHE} to ${s3_uri}"
+        tar -czf ${tgz} ${CACHE}
+        aws s3 cp ${tgz} s3://${BUCKET}/${PREFIX}
+        return ${?}
+    fi
+    echo "INFO: ${s3_uri} already exists, skipping push"
+    return 0
 }
 
 ## process the opts
