@@ -68,7 +68,11 @@ function push_s3_cache {
         echo "INFO: packing and storing ${CACHE} to ${s3_uri}"
         tar -czf ${tgz} ${CACHE}
         aws s3 cp ${tgz} s3://${BUCKET}/${PREFIX}
-        return ${?}
+        if [ $? -eq 0 ]; then
+            rm -f ${tgz}
+            return 0
+        fi
+        return 1
     fi
     echo "INFO: ${s3_uri} already exists, skipping push"
     return 0
